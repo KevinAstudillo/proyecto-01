@@ -1,0 +1,55 @@
+import requests 
+import time
+from functools import lru_cache
+import pandas as pd #Libreria para poder manipular dataframes
+import csv #Libreria que nos permite trabajar con archivos csv
+api_key="d1836fa4fac0a3794c9968c5bd8df189" #Nuevamente asignamos como una varible nuestra Key necesaria para hacer consultas
+
+datos= pd.read_csv("C:/Users/Cochinitavinil/Desktop/Codigos_de_C/dataset1.csv",header=0) # Esta es la opcion segura siempre funciona, es decir toda la direccion del archvio 
+#datos= pd.read_csv("dataset1.csv",header=0) #Esta opcion funciona si tu archivo sobre el que trabajas el codigo esta guardado en el mismo lugar que el csv
+
+
+#%%
+"""
+Creamos primero que nada un archvo csv, que contiene las primeras 21 columnas del archivo orginal para 
+poder probar nuestro codigo de manera mas locas, este archivo es dataset2.csv
+"""
+datos= pd.read_csv("dataset2.csv",header=0)  # Usamos la libreria para ver el archivo muestra 
+#%%
+"""
+Usamos el modulos DictReader para convertir cada row de el csv en un diccionario, donde la 
+llave de cada modulo corresponde al nombre de la columna
+"""
+with open("dataset2.csv", 'r') as file:
+    csv_file = csv.DictReader(file)
+    for row in csv_file:
+        print(row)
+#%%
+@lru_cache() # la funcion que hace que nuestra funcion guarde en momeoria todos las eces que llamamos a funcion 
+def DaClimaCache(api_key,lat,lon):
+    
+    url= f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric&lang=sp"
+    respuesta=requests.get(url).json()
+    temperatura=respuesta["main"]["temp"]
+    sensacion=respuesta["main"]["feels_like"]
+    humedad= respuesta["main"]["humidity"]
+    print("Temperatura de : ",temperatura,"\nSensacion: ",sensacion,"\nHumedad : ",humedad)
+  
+    
+
+start=time.time()
+print("---------------------------------\n --------------------------------")   
+
+start=time.time()
+with open("dataset2.csv", 'r') as file:
+    csv_file = csv.DictReader(file)
+    for row in csv_file:
+        DaClimaCache(api_key,row["origin_latitude"],row["origin_longitude"])
+        DaClimaCache(api_key,row["destination_latitude"],row["destination_longitude"])
+
+print("----------------------------------")
+
+
+t2=time.time()-start
+print(f"Tiempo total de ejecucíon sin cache:  {t2}")
+print(DaClimaCache.cache_info()) # nos da informacion sobre cuantos elementos atramos en el cache y cuandos no
