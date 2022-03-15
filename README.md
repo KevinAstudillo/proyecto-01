@@ -22,7 +22,7 @@ api_key = "TU_API_KEY"
 donde `TU_API_KEY` la debes reemplazar por tu api key.
 
 Para correr el programa es necesario ejecutar el archivo 
-"proyecto01.py" de la carpeta src en la terminal con python, 
+`proyecto01.py` de la carpeta src en la terminal con python, 
 seguido de la ruta absoluta del archivo .csv de donde se quiere
 obtener los datos del clima, por ejemplo: 
 
